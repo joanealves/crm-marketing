@@ -1,89 +1,139 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+  DialogFooter, // Importe o DialogFooter aqui
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
+} from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 
 interface Campanha {
-  id: string
-  nome: string
-  status: string
-  tipo: string
-  dataInicio: string
-  dataFim: string
-  destinatarios: number
-  taxaAbertura: string
+  id: string;
+  nome: string;
+  status: string;
+  tipo: string;
+  dataInicio: string;
+  dataFim: string;
+  destinatarios: number;
+  taxaAbertura: string;
 }
 
 interface CampanhaFormProps {
-  children: React.ReactNode
-  campanha?: Campanha
+  children: React.ReactNode;
+  campanha?: Campanha;
+  onCampanhaCreated: (campanha: Campanha) => void; // Função para atualizar a lista de campanhas
 }
 
-export function CampanhaForm({ children, campanha }: CampanhaFormProps) {
-  const [open, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  
-  const isEditing = !!campanha
-  
+export function CampanhaForm({ children, campanha, onCampanhaCreated }: CampanhaFormProps) {
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [nome, setNome] = useState(campanha?.nome || "");
+  const [tipo, setTipo] = useState(campanha?.tipo || "email");
+  const [status, setStatus] = useState(campanha?.status || "rascunho");
+  const [dataInicio, setDataInicio] = useState(campanha?.dataInicio || "");
+  const [dataFim, setDataFim] = useState(campanha?.dataFim || "");
+  const [assunto, setAssunto] = useState("");
+  const [conteudo, setConteudo] = useState("");
+  const [grupo, setGrupo] = useState("todos");
+
+  const [nomeError, setNomeError] = useState("");
+
+  const isEditing = !!campanha;
+
+  const validateForm = () => {
+    let isValid = true;
+    if (!nome) {
+      setNomeError("O nome da campanha é obrigatório.");
+      isValid = false;
+    } else {
+      setNomeError("");
+    }
+    return isValid;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Simulação de salvamento (substitua com sua lógica real)
     setTimeout(() => {
-      setIsLoading(false)
-      setOpen(false)
+      setIsLoading(false);
+      setOpen(false);
+
+      const novaCampanha = {
+        id: Math.random().toString(), // Gere um ID único
+        nome,
+        status,
+        tipo,
+        dataInicio,
+        dataFim,
+        destinatarios: 0,
+        taxaAbertura: "0%",
+      };
+
+      onCampanhaCreated(novaCampanha); // Chama a função para atualizar a lista de campanhas
+
       toast({
         title: isEditing ? "Campanha atualizada!" : "Campanha criada!",
-        description: isEditing 
+        description: isEditing
           ? "A campanha foi atualizada com sucesso."
           : "A nova campanha foi criada com sucesso.",
-      })
-    }, 1000)
-  }
-  
+      });
+
+      // Limpar os campos do formulário
+      setNome("");
+      setTipo("email");
+      setStatus("rascunho");
+      setDataInicio("");
+      setDataFim("");
+      setAssunto("");
+      setConteudo("");
+      setGrupo("todos");
+    }, 1000);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Editar campanha" : "Nova campanha"}
           </DialogTitle>
           <DialogDescription>
-            {isEditing 
-              ? "Atualize os detalhes da campanha existente." 
+            {isEditing
+              ? "Atualize os detalhes da campanha existente."
               : "Preencha os campos para criar uma nova campanha."}
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit}>
           <Tabs defaultValue="detalhes" className="mt-4">
             <TabsList className="grid w-full grid-cols-3">
@@ -91,23 +141,25 @@ export function CampanhaForm({ children, campanha }: CampanhaFormProps) {
               <TabsTrigger value="conteudo">Conteúdo</TabsTrigger>
               <TabsTrigger value="destinatarios">Destinatários</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="detalhes" className="mt-4 space-y-4">
               <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="nome">Nome da campanha</Label>
-                  <Input 
-                    id="nome" 
-                    placeholder="Ex: Promoção de Verão 2025" 
-                    defaultValue={campanha?.nome}
+                  <Input
+                    id="nome"
+                    placeholder="Ex: Promoção de Verão 2025"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
                     required
                   />
+                  {nomeError && <p className="text-red-500 text-sm">{nomeError}</p>}
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="tipo">Tipo de campanha</Label>
-                    <Select defaultValue={campanha?.tipo || "email"}>
+                    <Select value={tipo} onValueChange={setTipo}>
                       <SelectTrigger id="tipo">
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
@@ -118,10 +170,10 @@ export function CampanhaForm({ children, campanha }: CampanhaFormProps) {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="status">Status</Label>
-                    <Select defaultValue={campanha?.status || "rascunho"}>
+                    <Select value={status} onValueChange={setStatus}>
                       <SelectTrigger id="status">
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
@@ -134,52 +186,58 @@ export function CampanhaForm({ children, campanha }: CampanhaFormProps) {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="dataInicio">Data de início</Label>
-                    <Input 
-                      id="dataInicio" 
-                      type="date" 
-                      defaultValue={campanha?.dataInicio}
+                    <Input
+                      id="dataInicio"
+                      type="date"
+                      value={dataInicio}
+                      onChange={(e) => setDataInicio(e.target.value)}
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="dataFim">Data de término</Label>
-                    <Input 
-                      id="dataFim" 
-                      type="date" 
-                      defaultValue={campanha?.dataFim}
+                    <Input
+                      id="dataFim"
+                      type="date"
+                      value={dataFim}
+                      onChange={(e) => setDataFim(e.target.value)}
                     />
                   </div>
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="conteudo" className="mt-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="assunto">Assunto</Label>
-                <Input 
-                  id="assunto" 
-                  placeholder="Assunto do e-mail ou título da notificação" 
+                <Input
+                  id="assunto"
+                  placeholder="Assunto do e-mail ou título da notificação"
+                  value={assunto}
+                  onChange={(e) => setAssunto(e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="conteudo">Conteúdo</Label>
-                <Textarea 
-                  id="conteudo" 
-                  placeholder="Digite o conteúdo da campanha aqui" 
+                <Textarea
+                  id="conteudo"
+                  placeholder="Digite o conteúdo da campanha aqui"
                   className="min-h-[200px]"
+                  value={conteudo}
+                  onChange={(e) => setConteudo(e.target.value)}
                 />
               </div>
             </TabsContent>
-            
+
             <TabsContent value="destinatarios" className="mt-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="grupo">Grupo de destinatários</Label>
-                <Select>
+                <Select value={grupo} onValueChange={setGrupo}>
                   <SelectTrigger id="grupo">
                     <SelectValue placeholder="Selecione um grupo" />
                   </SelectTrigger>
@@ -191,7 +249,7 @@ export function CampanhaForm({ children, campanha }: CampanhaFormProps) {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Filtros adicionais</Label>
                 <div className="grid grid-cols-2 gap-4">
@@ -211,7 +269,7 @@ export function CampanhaForm({ children, campanha }: CampanhaFormProps) {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="segmento" className="text-sm">Segmento</Label>
                     <Select>
@@ -230,27 +288,26 @@ export function CampanhaForm({ children, campanha }: CampanhaFormProps) {
               </div>
             </TabsContent>
           </Tabs>
-          
+
           <DialogFooter className="mt-6">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setOpen(false)}
               disabled={isLoading}
             >
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading 
-                ? "Salvando..." 
-                : isEditing 
-                  ? "Salvar alterações" 
-                  : "Criar campanha"
-              }
+              {isLoading
+                ? "Salvando..."
+                : isEditing
+                  ? "Salvar alterações"
+                  : "Criar campanha"}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

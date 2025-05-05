@@ -53,7 +53,7 @@ export default function Home() {
                 Uma solução completa de CRM para impulsionar seu negócio e melhorar o relacionamento com seus clientes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/register">
+                <Link href="/auth/register">
                   <Button variant="secondary" size="lg">
                     Começar Agora
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -182,12 +182,12 @@ export default function Home() {
             Registre-se hoje e comece a gerenciar seus clientes de forma mais eficiente.
           </p>
           <div className="flex justify-center gap-4">
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button variant="secondary" size="lg">
                 Criar Conta
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="outline" className="border-white text-white hover:text-primary hover:bg-white" size="lg">
                 Fazer Login
               </Button>
@@ -204,12 +204,12 @@ export default function Home() {
               <p className="text-gray-400">Desenvolvido como projeto de portfólio</p>
             </div>
             <div className="flex gap-4">
-              <Link href="/login">
+              <Link href="/auth/login">
                 <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
                   Login
                 </Button>
               </Link>
-              <Link href="/register">
+              <Link href="/auth/register">
                 <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
                   Registro
                 </Button>

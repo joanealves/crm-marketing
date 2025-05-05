@@ -13,7 +13,7 @@ export const clientes: Cliente[] = [
     ultimoContato: "2025-04-28",
     proximoContato: "2025-05-15",
     notas: "Cliente de longa data, interessado em renovar contrato",
-    avatar: "/avatars/joao.png"
+    avatar: "../assets/avatars/joao.png"
   },
   {
     id: "2",
@@ -26,7 +26,7 @@ export const clientes: Cliente[] = [
     valor: 50000,
     ultimoContato: "2025-05-01",
     notas: "Interessada em nossa solução de CRM",
-    avatar: "/avatars/maria.png"
+    avatar: "../assets/avatars/maria.png"
   },
   {
     id: "3",
@@ -40,7 +40,7 @@ export const clientes: Cliente[] = [
     ultimoContato: "2025-04-15",
     proximoContato: "2025-05-05",
     notas: "Negociação em andamento para expansão do contrato",
-    avatar: "/avatars/pedro.png"
+    avatar: "../assets/avatars/pedro.png"
   },
   {
     id: "4",
