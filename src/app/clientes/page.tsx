@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Search } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -23,12 +23,23 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { SafeHydration } from "@/components/SafeHydration";
 import { Sidebar } from "@/components/dashboard/Sidebar";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface Cliente {
   id: string;
   nome: string;
   email: string;
   telefone: string;
+  empresa?: string;
+  cargo?: string;
+  status?: string;
 }
 
 export default function ClientesPage() {
@@ -42,6 +53,7 @@ export default function ClientesPage() {
 function ClientesContent() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const storedClientes = localStorage.getItem("clientes");
@@ -52,13 +64,19 @@ function ClientesContent() {
             id: uuidv4(),
             nome: "João da Silva",
             email: "joao@email.com",
-            telefone: "1234-5678",
+            telefone: "(11) 1234-5678",
+            empresa: "Tech Solutions",
+            cargo: "Diretor de TI",
+            status: "ativo",
           },
           {
             id: uuidv4(),
             nome: "Maria Souza",
             email: "maria@email.com",
-            telefone: "9876-5432",
+            telefone: "(11) 9876-5432",
+            empresa: "Startup Inovadora",
+            cargo: "CEO",
+            status: "lead",
           },
         ];
     setClientes(initialClientes);
@@ -75,12 +93,18 @@ function ClientesContent() {
   const [novoClienteNome, setNovoClienteNome] = useState("");
   const [novoClienteEmail, setNovoClienteEmail] = useState("");
   const [novoClienteTelefone, setNovoClienteTelefone] = useState("");
+  const [novoClienteEmpresa, setNovoClienteEmpresa] = useState("");
+  const [novoClienteCargo, setNovoClienteCargo] = useState("");
+  const [novoClienteStatus, setNovoClienteStatus] = useState("lead");
 
   const [isEditarOpen, setIsEditarOpen] = useState(false);
   const [clienteEditando, setClienteEditando] = useState<Cliente | null>(null);
   const [editClienteNome, setEditClienteNome] = useState("");
   const [editClienteEmail, setEditClienteEmail] = useState("");
   const [editClienteTelefone, setEditClienteTelefone] = useState("");
+  const [editClienteEmpresa, setEditClienteEmpresa] = useState("");
+  const [editClienteCargo, setEditClienteCargo] = useState("");
+  const [editClienteStatus, setEditClienteStatus] = useState("");
 
   const handleAdicionarCliente = () => {
     if (novoClienteNome && novoClienteEmail && novoClienteTelefone) {
@@ -89,13 +113,23 @@ function ClientesContent() {
         nome: novoClienteNome,
         email: novoClienteEmail,
         telefone: novoClienteTelefone,
+        empresa: novoClienteEmpresa,
+        cargo: novoClienteCargo,
+        status: novoClienteStatus,
       };
       setClientes([...clientes, novoCliente]);
       setIsAdicionarOpen(false);
-      setNovoClienteNome("");
-      setNovoClienteEmail("");
-      setNovoClienteTelefone("");
+      resetNovoClienteForm();
     }
+  };
+
+  const resetNovoClienteForm = () => {
+    setNovoClienteNome("");
+    setNovoClienteEmail("");
+    setNovoClienteTelefone("");
+    setNovoClienteEmpresa("");
+    setNovoClienteCargo("");
+    setNovoClienteStatus("lead");
   };
 
   const handleExcluirCliente = (clienteId: string) => {
@@ -107,6 +141,9 @@ function ClientesContent() {
     setEditClienteNome(cliente.nome);
     setEditClienteEmail(cliente.email);
     setEditClienteTelefone(cliente.telefone);
+    setEditClienteEmpresa(cliente.empresa || "");
+    setEditClienteCargo(cliente.cargo || "");
+    setEditClienteStatus(cliente.status || "lead");
     setIsEditarOpen(true);
   };
 
@@ -124,6 +161,9 @@ function ClientesContent() {
               nome: editClienteNome,
               email: editClienteEmail,
               telefone: editClienteTelefone,
+              empresa: editClienteEmpresa,
+              cargo: editClienteCargo,
+              status: editClienteStatus,
             }
           : cliente
       );
@@ -132,102 +172,226 @@ function ClientesContent() {
       setClienteEditando(null);
     }
   };
+  
+  const getStatusBadge = (status?: string) => {
+    switch (status) {
+      case "ativo":
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Ativo</Badge>;
+      case "lead":
+        return <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">Lead</Badge>;
+      case "oportunidade":
+        return <Badge variant="outline" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">Oportunidade</Badge>;
+      case "inativo":
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300">Inativo</Badge>;
+      default:
+        return <Badge variant="outline">{status || "Não definido"}</Badge>;
+    }
+  };
+  
+  const filteredClientes = clientes.filter(cliente => 
+    cliente.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (cliente.empresa && cliente.empresa.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    cliente.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen flex-col md:flex-row">
       <Sidebar />
 
-      <div className="container mx-auto py-8 flex-1 overflow-y-auto">
-        <h1 className="text-3xl font-bold mb-6">Clientes</h1>
+      <div className="flex-1 p-4 md:p-8 overflow-y-auto">
+        <Card className="w-full">
+          <CardHeader className="px-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <CardTitle className="text-2xl font-bold">Clientes</CardTitle>
+                <p className="text-muted-foreground">Gerencie seus clientes e contatos</p>
+              </div>
+              <Button onClick={() => setIsAdicionarOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar Cliente
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="px-6">
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar clientes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
 
-        <Button onClick={() => setIsAdicionarOpen(true)} className="mb-4">
-          <Plus className="mr-2 h-4 w-4" />
-          Adicionar Cliente
-        </Button>
+            <div className="rounded-md border overflow-hidden">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead className="hidden sm:table-cell">Email</TableHead>
+                      <TableHead className="hidden md:table-cell">Telefone</TableHead>
+                      <TableHead className="hidden lg:table-cell">Empresa</TableHead>
+                      <TableHead className="hidden xl:table-cell">Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredClientes.length > 0 ? (
+                      filteredClientes.map((cliente) => (
+                        <TableRow key={cliente.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-8 w-8 hidden sm:flex">
+                                <AvatarFallback className="bg-primary/10 text-primary">
+                                  {cliente.nome.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <span className="font-medium">{cliente.nome}</span>
+                                <p className="text-sm text-muted-foreground sm:hidden">{cliente.email}</p>
+                                <p className="text-sm text-muted-foreground md:hidden">{cliente.telefone}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="hidden sm:table-cell">{cliente.email}</TableCell>
+                          <TableCell className="hidden md:table-cell">{cliente.telefone}</TableCell>
+                          <TableCell className="hidden lg:table-cell">{cliente.empresa || "-"}</TableCell>
+                          <TableCell className="hidden xl:table-cell">
+                            {getStatusBadge(cliente.status)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleEditarCliente(cliente)}
+                              >
+                                <Edit className="h-4 w-4" />
+                                <span className="sr-only">Editar</span>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleExcluirCliente(cliente.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                <span className="sr-only">Excluir</span>
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-6">
+                          Nenhum cliente encontrado
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Telefone</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {clientes.map((cliente) => (
-              <TableRow key={cliente.id}>
-                <TableCell>{cliente.nome}</TableCell>
-                <TableCell>{cliente.email}</TableCell>
-                <TableCell>{cliente.telefone}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center space-x-2 justify-end">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditarCliente(cliente)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleExcluirCliente(cliente.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        <Dialog open={isAdicionarOpen} onOpenChange={setIsAdicionarOpen}>
-          <DialogContent>
+        {/* Modal Adicionar Cliente */}
+        <Dialog open={isAdicionarOpen} onOpenChange={(open) => {
+          setIsAdicionarOpen(open);
+          if (!open) resetNovoClienteForm();
+        }}>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Adicionar Cliente</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="nome" className="text-right">
-                  Nome
+                  Nome*
                 </Label>
                 <Input
                   id="nome"
                   value={novoClienteNome}
                   onChange={(e) => setNovoClienteNome(e.target.value)}
                   className="col-span-3"
+                  placeholder="Nome completo"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
-                  Email
+                  Email*
                 </Label>
                 <Input
                   id="email"
+                  type="email"
                   value={novoClienteEmail}
                   onChange={(e) => setNovoClienteEmail(e.target.value)}
                   className="col-span-3"
+                  placeholder="email@exemplo.com"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="telefone" className="text-right">
-                  Telefone
+                  Telefone*
                 </Label>
                 <Input
                   id="telefone"
                   value={novoClienteTelefone}
                   onChange={(e) => setNovoClienteTelefone(e.target.value)}
                   className="col-span-3"
+                  placeholder="(00) 00000-0000"
                 />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="empresa" className="text-right">
+                  Empresa
+                </Label>
+                <Input
+                  id="empresa"
+                  value={novoClienteEmpresa}
+                  onChange={(e) => setNovoClienteEmpresa(e.target.value)}
+                  className="col-span-3"
+                  placeholder="Nome da empresa"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="cargo" className="text-right">
+                  Cargo
+                </Label>
+                <Input
+                  id="cargo"
+                  value={novoClienteCargo}
+                  onChange={(e) => setNovoClienteCargo(e.target.value)}
+                  className="col-span-3"
+                  placeholder="Cargo ou função"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">
+                  Status
+                </Label>
+                <select
+                  id="status"
+                  value={novoClienteStatus}
+                  onChange={(e) => setNovoClienteStatus(e.target.value)}
+                  className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="lead">Lead</option>
+                  <option value="oportunidade">Oportunidade</option>
+                  <option value="ativo">Ativo</option>
+                  <option value="inativo">Inativo</option>
+                </select>
               </div>
             </div>
             <DialogFooter>
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => setIsAdicionarOpen(false)}
+                onClick={() => {
+                  setIsAdicionarOpen(false);
+                  resetNovoClienteForm();
+                }}
               >
                 Cancelar
               </Button>
@@ -238,8 +402,9 @@ function ClientesContent() {
           </DialogContent>
         </Dialog>
 
+        {/* Modal Editar Cliente */}
         <Dialog open={isEditarOpen} onOpenChange={setIsEditarOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Editar Cliente</DialogTitle>
             </DialogHeader>
@@ -247,7 +412,7 @@ function ClientesContent() {
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit-nome" className="text-right">
-                    Nome
+                    Nome*
                   </Label>
                   <Input
                     id="edit-nome"
@@ -258,10 +423,11 @@ function ClientesContent() {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit-email" className="text-right">
-                    Email
+                    Email*
                   </Label>
                   <Input
                     id="edit-email"
+                    type="email"
                     value={editClienteEmail}
                     onChange={(e) => setEditClienteEmail(e.target.value)}
                     className="col-span-3"
@@ -269,7 +435,7 @@ function ClientesContent() {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit-telefone" className="text-right">
-                    Telefone
+                    Telefone*
                   </Label>
                   <Input
                     id="edit-telefone"
@@ -277,6 +443,44 @@ function ClientesContent() {
                     onChange={(e) => setEditClienteTelefone(e.target.value)}
                     className="col-span-3"
                   />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit-empresa" className="text-right">
+                    Empresa
+                  </Label>
+                  <Input
+                    id="edit-empresa"
+                    value={editClienteEmpresa}
+                    onChange={(e) => setEditClienteEmpresa(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit-cargo" className="text-right">
+                    Cargo
+                  </Label>
+                  <Input
+                    id="edit-cargo"
+                    value={editClienteCargo}
+                    onChange={(e) => setEditClienteCargo(e.target.value)}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit-status" className="text-right">
+                    Status
+                  </Label>
+                  <select
+                    id="edit-status"
+                    value={editClienteStatus}
+                    onChange={(e) => setEditClienteStatus(e.target.value)}
+                    className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="lead">Lead</option>
+                    <option value="oportunidade">Oportunidade</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                  </select>
                 </div>
               </div>
             ) : (
