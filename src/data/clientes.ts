@@ -13,7 +13,7 @@ export const clientes: Cliente[] = [
     ultimoContato: "2025-04-28",
     proximoContato: "2025-05-15",
     notas: "Cliente de longa data, interessado em renovar contrato",
-    avatar: "../assets/avatars/joao.png"
+    avatar: ""
   },
   {
     id: "2",
@@ -26,7 +26,7 @@ export const clientes: Cliente[] = [
     valor: 50000,
     ultimoContato: "2025-05-01",
     notas: "Interessada em nossa solução de CRM",
-    avatar: "./assets/avatars/carlos.png"
+    avatar: ""
   },
   {
     id: "3",
@@ -40,7 +40,7 @@ export const clientes: Cliente[] = [
     ultimoContato: "2025-04-15",
     proximoContato: "2025-05-05",
     notas: "Negociação em andamento para expansão do contrato",
-    avatar: "../assets/avatars/pedro.png"
+    avatar: ""
   },
   {
     id: "4",
@@ -54,7 +54,7 @@ export const clientes: Cliente[] = [
     ultimoContato: "2025-04-20",
     proximoContato: "2025-05-20",
     notas: "Cliente satisfeita, possibilidade de cross-sell",
-    avatar: "/avatars/ana.png"
+    avatar: ""
   },
   {
     id: "5",
@@ -67,6 +67,6 @@ export const clientes: Cliente[] = [
     valor: 0,
     ultimoContato: "2025-03-10",
     notas: "Contrato encerrado, tentar reconquistar",
-    avatar: "/avatars/carlos.png"
+    avatar: ""
   }
 ];
