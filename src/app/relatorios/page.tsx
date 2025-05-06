@@ -2,8 +2,119 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, LineChart } from "lucide-react";
+import { vendas } from "@/data/vendas";
+import { campanhas } from "@/data/campanhas";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+} from 'chart.js';
+import { Line, Bar } from "react-chartjs-2";
+import { useEffect, useState } from "react";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement
+);
+
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+  }[];
+}
 
 export default function RelatoriosPage() {
+  const [vendasMensais, setVendasMensais] = useState<any>({});
+  const [campanhasData, setCampanhasData] = useState<ChartData>({ labels: [], datasets: [] });
+
+  useEffect(() => {
+    // Dados de Vendas Mensais
+    const vendasPorMes: { [key: string]: number } = {};
+    vendas.forEach(venda => {
+      const dataVenda = new Date(venda.data);
+      const mesAno = `${dataVenda.getMonth() + 1}/${dataVenda.getFullYear()}`;
+      if (vendasPorMes[mesAno]) {
+        vendasPorMes[mesAno] += venda.valor;
+      } else {
+        vendasPorMes[mesAno] = venda.valor;
+      }
+    });
+
+    const labelsVendas = Object.keys(vendasPorMes);
+    const dataVendas = Object.values(vendasPorMes);
+
+    setVendasMensais({
+      labels: labelsVendas,
+      datasets: [
+        {
+          label: 'Vendas Mensais',
+          data: dataVendas,
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        },
+      ],
+    });
+
+    // Dados de Desempenho de Campanhas
+    const labelsCampanhas = campanhas.map(campanha => campanha.nome);
+    const dataCampanhas = campanhas.map(campanha => {
+      const taxaAbertura = campanha.taxaAbertura ? parseFloat(campanha.taxaAbertura.replace('%', '')) : 0;
+      return taxaAbertura;
+    });
+
+    setCampanhasData({
+      labels: labelsCampanhas,
+      datasets: [
+        {
+          label: 'Taxa de Abertura (%)',
+          data: dataCampanhas,
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+      ],
+    });
+  }, []);
+
+  const lineChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Vendas por Período',
+      },
+    },
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Desempenho de Campanhas',
+      },
+    },
+  };
+
   return (
     <div className="container mx-auto py-8 space-y-6">
       <h1 className="text-3xl font-bold">Relatórios</h1>
@@ -17,7 +128,11 @@ export default function RelatoriosPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">Gráfico de vendas por período.</p>
+            {vendasMensais?.labels?.length > 0 ? (
+              <Line options={lineChartOptions} data={vendasMensais} />
+            ) : (
+              <p className="text-muted-foreground">Nenhum dado de vendas disponível.</p>
+            )}
           </CardContent>
         </Card>
 
@@ -29,7 +144,11 @@ export default function RelatoriosPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">Gráfico de desempenho de campanhas.</p>
+            {campanhasData?.labels?.length > 0 ? (
+              <Bar options={barChartOptions} data={campanhasData} />
+            ) : (
+              <p className="text-muted-foreground">Nenhum dado de campanhas disponível.</p>
+            )}
           </CardContent>
         </Card>
       </div>
