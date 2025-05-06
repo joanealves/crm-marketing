@@ -17,7 +17,6 @@ export default function RelatoriosPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Aqui você colocaria um gráfico de linhas mostrando as vendas por período */}
             <p className="text-muted-foreground">Gráfico de vendas por período.</p>
           </CardContent>
         </Card>
@@ -30,7 +29,6 @@ export default function RelatoriosPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Aqui você colocaria um gráfico de barras mostrando o desempenho das campanhas */}
             <p className="text-muted-foreground">Gráfico de desempenho de campanhas.</p>
           </CardContent>
         </Card>

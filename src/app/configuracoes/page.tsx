@@ -11,7 +11,6 @@ export default function ConfiguracoesPage() {
   const [email, setEmail] = useState("admin@empresa.com.br");
 
   const handleSalvar = () => {
-    // Aqui você salvaria as configurações no banco de dados ou local storage
     alert("Configurações salvas!");
   };
 

@@ -13,28 +13,43 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { v4 as uuidv4 } from 'uuid'; 
+import { SafeHydration } from "@/components/SafeHydration"; 
 interface Cliente {
   id: string;
   nome: string;
   email: string;
   telefone: string;
-  status: string;
 }
 
 export default function ClientesPage() {
-  const [clientes, setClientes] = useState<Cliente[]>(() => {
-    const storedClientes = localStorage.getItem("clientes");
-    return storedClientes ? JSON.parse(storedClientes) : [
-      { id: "1", nome: "João Silva", email: "joao@email.com", telefone: "11999999999", status: "ativo" },
-      { id: "2", nome: "Maria Oliveira", email: "maria@email.com", telefone: "21999999999", status: "inativo" },
-    ];
-  });
+  return (
+    <SafeHydration>
+      <ClientesContent />
+    </SafeHydration>
+  );
+}
+
+function ClientesContent() {
+  const [clientes, setClientes] = useState<Cliente[]>([]); 
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("clientes", JSON.stringify(clientes));
-  }, [clientes]);
+    const storedClientes = localStorage.getItem("clientes");
+    const initialClientes = storedClientes ? JSON.parse(storedClientes) : [
+      { id: uuidv4(), nome: "João da Silva", email: "joao@email.com", telefone: "1234-5678" },
+      { id: uuidv4(), nome: "Maria Souza", email: "maria@email.com", telefone: "9876-5432" },
+    ];
+    setClientes(initialClientes);
+    setIsLoaded(true);
+  }, []); 
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("clientes", JSON.stringify(clientes));
+    }
+  }, [clientes, isLoaded]);
 
   const [isAdicionarOpen, setIsAdicionarOpen] = useState(false);
   const [novoClienteNome, setNovoClienteNome] = useState("");
@@ -50,11 +65,10 @@ export default function ClientesPage() {
   const handleAdicionarCliente = () => {
     if (novoClienteNome && novoClienteEmail && novoClienteTelefone) {
       const novoCliente = {
-        id: Math.random().toString(),
+        id: uuidv4(), 
         nome: novoClienteNome,
         email: novoClienteEmail,
         telefone: novoClienteTelefone,
-        status: "ativo",
       };
       setClientes([...clientes, novoCliente]);
       setIsAdicionarOpen(false);
@@ -104,7 +118,6 @@ export default function ClientesPage() {
             <TableHead>Nome</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Telefone</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -114,16 +127,15 @@ export default function ClientesPage() {
               <TableCell>{cliente.nome}</TableCell>
               <TableCell>{cliente.email}</TableCell>
               <TableCell>{cliente.telefone}</TableCell>
-              <TableCell>{cliente.status}</TableCell>
               <TableCell className="text-right">
-                <Button variant="ghost" size="icon" onClick={() => handleEditarCliente(cliente)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Editar
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleExcluirCliente(cliente.id)}>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Excluir
-                </Button>
+                <div className="flex items-center space-x-2 justify-end"> 
+                  <Button variant="ghost" size="icon" onClick={() => handleEditarCliente(cliente)}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleExcluirCliente(cliente.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -146,7 +158,7 @@ export default function ClientesPage() {
               <Label htmlFor="email" className="text-right">
                 Email
               </Label>
-              <Input type="email" id="email" value={novoClienteEmail} onChange={(e) => setNovoClienteEmail(e.target.value)} className="col-span-3" />
+              <Input id="email" value={novoClienteEmail} onChange={(e) => setNovoClienteEmail(e.target.value)} className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="telefone" className="text-right">
@@ -166,7 +178,6 @@ export default function ClientesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal Editar */}
       <Dialog open={isEditarOpen} onOpenChange={setIsEditarOpen}>
         <DialogContent>
           <DialogHeader>
@@ -184,7 +195,7 @@ export default function ClientesPage() {
                 <Label htmlFor="edit-email" className="text-right">
                   Email
                 </Label>
-                <Input type="email" id="edit-email" value={editClienteEmail} onChange={(e) => setEditClienteEmail(e.target.value)} className="col-span-3" />
+                <Input id="edit-email" value={editClienteEmail} onChange={(e) => setEditClienteEmail(e.target.value)} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-telefone" className="text-right">

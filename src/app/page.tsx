@@ -1,3 +1,6 @@
+"use client";
+
+import { SafeHydration } from '@/components/SafeHydration';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, BarChart2, Users, Calendar, Mail, Shield } from "lucide-react";
@@ -41,191 +44,193 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <section className="bg-gradient-to-r from-primary/90 to-primary/70 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-10 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Gerencie seus clientes e vendas com simplicidade
-              </h1>
-              <p className="text-xl mb-8 text-white/90">
-                Uma solução completa de CRM para impulsionar seu negócio e melhorar o relacionamento com seus clientes.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/auth/register">
-                  <Button variant="secondary" size="lg">
-                    Começar Agora
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/dashboard">
-                  <Button variant="outline" className="border-white text-white hover:text-primary hover:bg-white" size="lg">
-                    Acessar Demo
-                  </Button>
-                </Link>
+    <SafeHydration>
+      <div className="flex flex-col min-h-screen">
+        <section className="bg-gradient-to-r from-primary/90 to-primary/70 text-white py-20">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="md:w-1/2 mb-10 md:mb-0">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                  Gerencie seus clientes e vendas com simplicidade
+                </h1>
+                <p className="text-xl mb-8 text-white/90">
+                  Uma solução completa de CRM para impulsionar seu negócio e melhorar o relacionamento com seus clientes.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link href="/auth/register">
+                    <Button variant="secondary" size="lg">
+                      Começar Agora
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard">
+                    <Button variant="outline" className="border-white text-white hover:text-primary hover:bg-white" size="lg">
+                      Acessar Demo
+                    </Button>
+                  </Link>
+                </div>
               </div>
-            </div>
-            <div className="md:w-1/2 flex justify-center">
-              <div className="relative w-full max-w-lg h-[400px] rounded-lg overflow-hidden shadow-xl">
-                <div className="absolute inset-0 bg-white rounded-lg">
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <BarChart2 className="h-20 w-20 text-gray-400" />
+              <div className="md:w-1/2 flex justify-center">
+                <div className="relative w-full max-w-lg h-[400px] rounded-lg overflow-hidden shadow-xl">
+                  <div className="absolute inset-0 bg-white rounded-lg">
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <BarChart2 className="h-20 w-20 text-gray-400" />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-20 bg-gray-50 dark:bg-gray-900/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Recursos Poderosos</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Tudo o que você precisa para gerenciar seu negócio com eficiência e precisão.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                <div className="mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Veja o CRM em Ação</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Interface intuitiva e moderna para otimizar sua gestão de relacionamento com clientes.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                <Users className="h-16 w-16 text-gray-400" />
-              </div>
-              <div className="p-4">
-                <h3 className="font-bold mb-2">Gestão de Clientes</h3>
-                <p className="text-sm text-muted-foreground">Visualize e organize todos os seus contatos.</p>
-              </div>
+        <section className="py-20 bg-gray-50 dark:bg-gray-900/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4">Recursos Poderosos</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Tudo o que você precisa para gerenciar seu negócio com eficiência e precisão.
+              </p>
             </div>
             
-            <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                <BarChart2 className="h-16 w-16 text-gray-400" />
-              </div>
-              <div className="p-4">
-                <h3 className="font-bold mb-2">Dashboard Analítico</h3>
-                <p className="text-sm text-muted-foreground">Acompanhe métricas importantes para seu negócio.</p>
-              </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {features.map((feature, index) => (
+                <div key={index} className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4">Veja o CRM em Ação</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Interface intuitiva e moderna para otimizar sua gestão de relacionamento com clientes.
+              </p>
             </div>
             
-            <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                <Mail className="h-16 w-16 text-gray-400" />
-              </div>
-              <div className="p-4">
-                <h3 className="font-bold mb-2">Campanhas de Marketing</h3>
-                <p className="text-sm text-muted-foreground">Crie e acompanhe suas campanhas de email.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="text-center mt-12">
-            <Link href="/dashboard">
-              <Button size="lg">
-                Acessar Demonstração
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-gray-50 dark:bg-gray-900/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">O que Nossos Clientes Dizem</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Veja como nosso CRM tem ajudado empresas a crescer.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                <p className="text-lg mb-4 italic">"{testimonial.quote}"</p>
-                <div>
-                  <p className="font-bold">{testimonial.author}</p>
-                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div className="aspect-video bg-gray-200 flex items-center justify-center">
+                  <Users className="h-16 w-16 text-gray-400" />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold mb-2">Gestão de Clientes</h3>
+                  <p className="text-sm text-muted-foreground">Visualize e organize todos os seus contatos.</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-primary text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Pronto para começar?</h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-            Registre-se hoje e comece a gerenciar seus clientes de forma mais eficiente.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link href="/auth/register">
-              <Button variant="secondary" size="lg">
-                Criar Conta
-              </Button>
-            </Link>
-            <Link href="/auth/login">
-              <Button variant="outline" className="border-white text-white hover:text-primary hover:bg-white" size="lg">
-                Fazer Login
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-8 md:mb-0">
-              <h3 className="text-xl font-bold mb-2">CRM Portfolio</h3>
-              <p className="text-gray-400">Desenvolvido como projeto de portfólio</p>
+              
+              <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div className="aspect-video bg-gray-200 flex items-center justify-center">
+                  <BarChart2 className="h-16 w-16 text-gray-400" />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold mb-2">Dashboard Analítico</h3>
+                  <p className="text-sm text-muted-foreground">Acompanhe métricas importantes para seu negócio.</p>
+                </div>
+              </div>
+              
+              <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div className="aspect-video bg-gray-200 flex items-center justify-center">
+                  <Mail className="h-16 w-16 text-gray-400" />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold mb-2">Campanhas de Marketing</h3>
+                  <p className="text-sm text-muted-foreground">Crie e acompanhe suas campanhas de email.</p>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <Link href="/auth/login">
-                <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/register">
-                <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
-                  Registro
-                </Button>
-              </Link>
+            
+            <div className="text-center mt-12">
               <Link href="/dashboard">
-                <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
-                  Dashboard
+                <Button size="lg">
+                  Acessar Demonstração
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             </div>
           </div>
-          <div className="border-t border-white/10 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} CRM Portfolio. Todos os direitos reservados.</p>
+        </section>
+
+        <section className="py-20 bg-gray-50 dark:bg-gray-900/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4">O que Nossos Clientes Dizem</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Veja como nosso CRM tem ajudado empresas a crescer.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <p className="text-lg mb-4 italic">"{testimonial.quote}"</p>
+                  <div>
+                    <p className="font-bold">{testimonial.author}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </footer>
-    </div>
+        </section>
+
+        <section className="py-20 bg-primary text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-4">Pronto para começar?</h2>
+            <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+              Registre-se hoje e comece a gerenciar seus clientes de forma mais eficiente.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link href="/auth/register">
+                <Button variant="secondary" size="lg">
+                  Criar Conta
+                </Button>
+              </Link>
+              <Link href="/auth/login">
+                <Button variant="outline" className="border-white text-white hover:text-primary hover:bg-white" size="lg">
+                  Fazer Login
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <footer className="bg-gray-900 text-white py-12">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="mb-8 md:mb-0">
+                <h3 className="text-xl font-bold mb-2">CRM Portfolio</h3>
+                <p className="text-gray-400">Desenvolvido como projeto de portfólio</p>
+              </div>
+              <div className="flex gap-4">
+                <Link href="/auth/login">
+                  <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
+                    Registro
+                  </Button>
+                </Link>
+                <Link href="/dashboard">
+                  <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
+                    Dashboard
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="border-t border-white/10 mt-8 pt-8 text-center text-gray-400">
+              <p>&copy; {new Date().getFullYear()} CRM Portfolio. Todos os direitos reservados.</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </SafeHydration>
   );
 }

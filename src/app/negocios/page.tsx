@@ -14,7 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { v4 as uuidv4 } from 'uuid';
+import { SafeHydration } from "@/components/SafeHydration"; 
 
 interface Negocio {
   id: string;
@@ -25,17 +27,32 @@ interface Negocio {
 }
 
 export default function NegociosPage() {
-  const [negocios, setNegocios] = useState<Negocio[]>(() => {
-    const storedNegocios = localStorage.getItem("negocios");
-    return storedNegocios ? JSON.parse(storedNegocios) : [
-      { id: "1", nome: "Venda de Software", cliente: "Empresa A", valor: 10000, etapa: "proposta" },
-      { id: "2", nome: "Consultoria", cliente: "Empresa B", valor: 5000, etapa: "negociação" },
-    ];
-  });
+  return (
+    <SafeHydration>
+      <NegociosContent />
+    </SafeHydration>
+  );
+}
+
+function NegociosContent() {
+  const [negocios, setNegocios] = useState<Negocio[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("negocios", JSON.stringify(negocios));
-  }, [negocios]);
+    const storedNegocios = localStorage.getItem("negocios");
+    const initialNegocios = storedNegocios ? JSON.parse(storedNegocios) : [
+      { id: uuidv4(), nome: "Venda de Software", cliente: "Empresa A", valor: 10000, etapa: "proposta" },
+      { id: uuidv4(), nome: "Consultoria", cliente: "Empresa B", valor: 5000, etapa: "negociação" },
+    ];
+    setNegocios(initialNegocios);
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("negocios", JSON.stringify(negocios));
+    }
+  }, [negocios, isLoaded]);
 
   const [isAdicionarOpen, setIsAdicionarOpen] = useState(false);
   const [novoNegocioNome, setNovoNegocioNome] = useState("");
@@ -53,7 +70,7 @@ export default function NegociosPage() {
   const handleAdicionarNegocio = () => {
     if (novoNegocioNome && novoNegocioCliente && novoNegocioValor) {
       const novoNegocio = {
-        id: Math.random().toString(),
+        id: uuidv4(),
         nome: novoNegocioNome,
         cliente: novoNegocioCliente,
         valor: novoNegocioValor,
@@ -170,7 +187,7 @@ export default function NegociosPage() {
                 Etapa
               </Label>
               <Select value={novoNegocioEtapa} onValueChange={setNovoNegocioEtapa} >
-                <SelectTrigger id="etapa">
+                <SelectTrigger id="etapa" className="col-span-3">
                   <SelectValue placeholder="Selecione a etapa" />
                 </SelectTrigger>
                 <SelectContent>
@@ -228,8 +245,8 @@ export default function NegociosPage() {
                 <Label htmlFor="edit-etapa" className="text-right">
                   Etapa
                 </Label>
-                <Select value={editNegocioEtapa} onValueChange={setEditNegocioEtapa} >
-                  <SelectTrigger id="edit-etapa">
+                <Select value={editNegocioEtapa} onValueChange={setEditNegocioEtapa}>
+                  <SelectTrigger id="edit-etapa" className="col-span-3">
                     <SelectValue placeholder="Selecione a etapa" />
                   </SelectTrigger>
                   <SelectContent>

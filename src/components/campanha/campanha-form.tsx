@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter, // Importe o DialogFooter aqui
+  DialogFooter, 
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,7 @@ interface Campanha {
 interface CampanhaFormProps {
   children: React.ReactNode;
   campanha?: Campanha;
-  onCampanhaCreated: (campanha: Campanha) => void; // Função para atualizar a lista de campanhas
+  onCampanhaCreated: (campanha: Campanha) => void; 
 }
 
 export function CampanhaForm({ children, campanha, onCampanhaCreated }: CampanhaFormProps) {
@@ -82,13 +82,12 @@ export function CampanhaForm({ children, campanha, onCampanhaCreated }: Campanha
 
     setIsLoading(true);
 
-    // Simulação de salvamento (substitua com sua lógica real)
     setTimeout(() => {
       setIsLoading(false);
       setOpen(false);
 
       const novaCampanha = {
-        id: Math.random().toString(), // Gere um ID único
+        id: Math.random().toString(), 
         nome,
         status,
         tipo,
@@ -98,7 +97,7 @@ export function CampanhaForm({ children, campanha, onCampanhaCreated }: Campanha
         taxaAbertura: "0%",
       };
 
-      onCampanhaCreated(novaCampanha); // Chama a função para atualizar a lista de campanhas
+      onCampanhaCreated(novaCampanha); 
 
       toast({
         title: isEditing ? "Campanha atualizada!" : "Campanha criada!",
@@ -107,7 +106,6 @@ export function CampanhaForm({ children, campanha, onCampanhaCreated }: Campanha
           : "A nova campanha foi criada com sucesso.",
       });
 
-      // Limpar os campos do formulário
       setNome("");
       setTipo("email");
       setStatus("rascunho");

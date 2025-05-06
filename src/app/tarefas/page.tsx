@@ -17,54 +17,99 @@ import { CheckCheck, Plus, Edit, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { v4 as uuidv4 } from 'uuid';
+import { SafeHydration } from "@/components/SafeHydration"; 
 
 interface Tarefa {
   id: string;
   descricao: string;
   responsavel: string;
-  prazo: Date | null;
+  prazo: string | null; 
   concluida: boolean;
 }
 
 export default function TarefasPage() {
-  const [tarefas, setTarefas] = useState<Tarefa[]>(() => {
-    const storedTarefas = localStorage.getItem("tarefas");
-    return storedTarefas ? JSON.parse(storedTarefas) : [
-      { id: "1", descricao: "Ligar para o cliente", responsavel: "João", prazo: new Date(), concluida: false },
-      { id: "2", descricao: "Enviar proposta", responsavel: "Maria", prazo: null, concluida: true },
-    ];
-  });
+  return (
+    <SafeHydration>
+      <TarefasContent />
+    </SafeHydration>
+  );
+}
+
+function TarefasContent() {
+  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("tarefas", JSON.stringify(tarefas));
-  }, [tarefas]);
+    try {
+      const storedTarefas = localStorage.getItem("tarefas");
+      let initialTarefas;
+
+      if (storedTarefas) {
+        initialTarefas = JSON.parse(storedTarefas);
+      } else {
+        initialTarefas = [
+          {
+            id: uuidv4(),
+            descricao: "Ligar para o cliente",
+            responsavel: "João",
+            prazo: new Date().toISOString(),
+            concluida: false
+          },
+          {
+            id: uuidv4(),
+            descricao: "Enviar proposta",
+            responsavel: "Maria",
+            prazo: null,
+            concluida: false
+          },
+        ];
+      }
+      setTarefas(initialTarefas);
+      setIsLoaded(true);
+    } catch (error) {
+      console.error("Erro ao carregar tarefas do localStorage:", error);
+      setTarefas([]);
+      setIsLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem("tarefas", JSON.stringify(tarefas));
+      } catch (error) {
+        console.error("Erro ao salvar tarefas no localStorage:", error);
+      }
+    }
+  }, [tarefas, isLoaded]);
 
   const [isAdicionarOpen, setIsAdicionarOpen] = useState(false);
   const [novaTarefaDescricao, setNovaTarefaDescricao] = useState("");
   const [novaTarefaResponsavel, setNovaTarefaResponsavel] = useState("");
-  const [novaTarefaPrazo, setNovaTarefaPrazo] = useState<Date | null>(null);
+  const [novaTarefaPrazo, setNovaTarefaPrazo] = useState<Date | undefined>(undefined);
 
   const [isEditarOpen, setIsEditarOpen] = useState(false);
   const [tarefaEditando, setTarefaEditando] = useState<Tarefa | null>(null);
   const [editTarefaDescricao, setEditTarefaDescricao] = useState("");
   const [editTarefaResponsavel, setEditTarefaResponsavel] = useState("");
-  const [editTarefaPrazo, setEditTarefaPrazo] = useState<Date | null>(null);
+  const [editTarefaPrazo, setEditTarefaPrazo] = useState<Date | undefined>(undefined);
 
   const handleAdicionarTarefa = () => {
     if (novaTarefaDescricao && novaTarefaResponsavel) {
-      const novaTarefa = {
-        id: Math.random().toString(),
+      const novaTarefa: Tarefa = {
+        id: uuidv4(),
         descricao: novaTarefaDescricao,
         responsavel: novaTarefaResponsavel,
-        prazo: novaTarefaPrazo,
+        prazo: novaTarefaPrazo ? novaTarefaPrazo.toISOString() : null,
         concluida: false,
       };
       setTarefas([...tarefas, novaTarefa]);
       setIsAdicionarOpen(false);
       setNovaTarefaDescricao("");
       setNovaTarefaResponsavel("");
-      setNovaTarefaPrazo(null);
+      setNovaTarefaPrazo(undefined);
     }
   };
 
@@ -72,27 +117,24 @@ export default function TarefasPage() {
     setTarefas(tarefas.filter((tarefa) => tarefa.id !== tarefaId));
   };
 
-  const handleConcluirTarefa = (tarefaId: string) => {
-    setTarefas(
-      tarefas.map((tarefa) =>
-        tarefa.id === tarefaId ? { ...tarefa, concluida: !tarefa.concluida } : tarefa
-      )
-    );
-  };
-
   const handleEditarTarefa = (tarefa: Tarefa) => {
     setTarefaEditando(tarefa);
     setEditTarefaDescricao(tarefa.descricao);
     setEditTarefaResponsavel(tarefa.responsavel);
-    setEditTarefaPrazo(tarefa.prazo);
+    setEditTarefaPrazo(tarefa.prazo ? new Date(tarefa.prazo) : undefined);
     setIsEditarOpen(true);
   };
 
   const handleSalvarEdicaoTarefa = () => {
-    if (tarefaEditando && editTarefaDescricao && editTarefaResponsavel) {
+    if (tarefaEditando) {
       const tarefasAtualizadas = tarefas.map((tarefa) =>
         tarefa.id === tarefaEditando.id
-          ? { ...tarefa, descricao: editTarefaDescricao, responsavel: editTarefaResponsavel, prazo: editTarefaPrazo }
+          ? {
+            ...tarefa,
+            descricao: editTarefaDescricao,
+            responsavel: editTarefaResponsavel,
+            prazo: editTarefaPrazo ? editTarefaPrazo.toISOString() : null,
+          }
           : tarefa
       );
       setTarefas(tarefasAtualizadas);
@@ -101,14 +143,12 @@ export default function TarefasPage() {
     }
   };
 
-  const handleNovaTarefaPrazoSelect = (date: Date | undefined) => {
-    setNovaTarefaPrazo(date === undefined ? null : date);
+  const handleConcluirTarefa = (tarefaId: string) => {
+    const tarefasAtualizadas = tarefas.map((tarefa) =>
+      tarefa.id === tarefaId ? { ...tarefa, concluida: !tarefa.concluida } : tarefa
+    );
+    setTarefas(tarefasAtualizadas);
   };
-
-  const handleEditTarefaPrazoSelect = (date: Date | undefined) => {
-    setEditTarefaPrazo(date === undefined ? null : date);
-  };
-
 
   return (
     <div className="container mx-auto py-8">
@@ -134,14 +174,20 @@ export default function TarefasPage() {
             <TableRow key={tarefa.id}>
               <TableCell>{tarefa.descricao}</TableCell>
               <TableCell>{tarefa.responsavel}</TableCell>
-              <TableCell>{tarefa.prazo ? format(tarefa.prazo, "dd/MM/yyyy", { locale: ptBR }) : "Sem prazo"}</TableCell>
+              <TableCell>
+                {tarefa.prazo ? format(new Date(tarefa.prazo), "dd/MM/yyyy", { locale: ptBR }) : "Sem prazo"}
+              </TableCell>
               <TableCell>
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => handleConcluirTarefa(tarefa.id)}
                 >
-                  {tarefa.concluida ? <CheckCheck className="h-4 w-4" /> : null}
+                  {tarefa.concluida ? (
+                    <CheckCheck className="h-4 w-4" />
+                  ) : (
+                    "Marcar"
+                  )}
                 </Button>
               </TableCell>
               <TableCell className="text-right">
@@ -186,20 +232,27 @@ export default function TarefasPage() {
                   <Button
                     variant={"outline"}
                     className={
-                      "justify-start pl-3 font-normal col-span-3" +
-                      (!novaTarefaPrazo ? " text-muted-foreground" : "")
+                      "w-[240px] pl-3 text-left font-normal" +
+                      (novaTarefaPrazo ? " text-foreground" : " text-muted-foreground")
                     }
                   >
-                    {novaTarefaPrazo ? format(novaTarefaPrazo, "dd/MM/yyyy", { locale: ptBR }) : <span>Prazo</span>}
+                    {novaTarefaPrazo ? (
+                      format(novaTarefaPrazo, "dd/MM/yyyy", { locale: ptBR })
+                    ) : (
+                      <span>Selecione uma data</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={novaTarefaPrazo || undefined} 
-                    onSelect={handleNovaTarefaPrazoSelect} 
                     locale={ptBR}
-                    className="rounded-md border"
+                    selected={novaTarefaPrazo}
+                    onSelect={setNovaTarefaPrazo}
+                    disabled={(date) =>
+                      date < new Date()
+                    }
+                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
@@ -244,19 +297,27 @@ export default function TarefasPage() {
                     <Button
                       variant={"outline"}
                       className={
-                        "justify-start pl-3 font-normal col-span-3" +
-                        (!editTarefaPrazo ? " text-muted-foreground" : "")
+                        "w-[240px] pl-3 text-left font-normal" +
+                        (editTarefaPrazo ? " text-foreground" : " text-muted-foreground")
                       }
                     >
-                      {editTarefaPrazo ? format(editTarefaPrazo, "dd/MM/yyyy", { locale: ptBR }) : <span>Prazo</span>}
+                      {editTarefaPrazo ? (
+                        format(editTarefaPrazo, "dd/MM/yyyy", { locale: ptBR })
+                      ) : (
+                        <span>Selecione uma data</span>
+                      )}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={editTarefaPrazo || undefined} 
                       locale={ptBR}
-                      className="rounded-md border"
+                      selected={editTarefaPrazo}
+                      onSelect={setEditTarefaPrazo}
+                      disabled={(date) =>
+                        date < new Date()
+                      }
+                      initialFocus
                     />
                   </PopoverContent>
                 </Popover>

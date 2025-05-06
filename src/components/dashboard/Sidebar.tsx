@@ -15,7 +15,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface SidebarItemProps {
   icon: React.ReactNode
@@ -42,8 +42,16 @@ function SidebarItem({ icon, label, href, isActive }: SidebarItemProps) {
 }
 
 export function Sidebar() {
-  const pathname = usePathname()
+  const [pathname, setPathname] = useState("")
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  
+  const routePathname = usePathname()
+  
+  useEffect(() => {
+    setPathname(routePathname || "")
+    setMounted(true)
+  }, [routePathname])
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen)
@@ -58,6 +66,23 @@ export function Sidebar() {
     { icon: <BarChart size={20} />, label: "Relatórios", href: "/relatorios" },
     { icon: <Settings size={20} />, label: "Configurações", href: "/configuracoes" },
   ]
+
+  if (!mounted) {
+    return (
+      <div className="fixed inset-y-0 left-0 z-40 w-64 bg-background border-r md:relative">
+        <div className="flex h-16 items-center px-4 py-4 border-b">
+          <h1 className="text-xl font-bold">CRM Pro</h1>
+        </div>
+        <div className="py-4 px-4">
+          <nav className="space-y-1">
+            {sidebarItems.map((item, index) => (
+              <div key={index} className="w-full h-10 mb-1 bg-muted/30 rounded-md"></div>
+            ))}
+          </nav>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>

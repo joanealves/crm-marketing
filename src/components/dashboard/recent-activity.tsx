@@ -8,11 +8,7 @@ interface Activity {
   timestamp: string
 }
 
-interface RecentActivityProps {
-  className?: string
-}
-
-export function RecentActivity({ className }: RecentActivityProps) {
+export function RecentActivity() {
   const activities: Activity[] = [
     {
       id: "1",
@@ -67,7 +63,7 @@ export function RecentActivity({ className }: RecentActivityProps) {
   ]
 
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader>
         <CardTitle>Atividade Recente</CardTitle>
       </CardHeader>

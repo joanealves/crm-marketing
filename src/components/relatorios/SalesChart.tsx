@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { vendas } from "@/data/vendas"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Line } from "react-chartjs-2"
 import {
@@ -18,26 +18,45 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-interface SalesChartProps {
-  className?: string
+interface ChartDataItem {
+  name: string;
+  total: number;
 }
 
-export function SalesChart({ className }: SalesChartProps) {
+export function SalesChart() {
   const [period, setPeriod] = useState<"year" | "semester" | "quarter">("semester")
+  const [chartData, setChartData] = useState<ChartDataItem[]>([])
+  const [formatter, setFormatter] = useState(new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }))
   
-  const currentDate = new Date()
-  const currentYear = currentDate.getFullYear()
-  const currentMonth = currentDate.getMonth()
+  useEffect(() => {
+    setFormatter(new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }))
+  }, [])
   
-  const vendasFechadas = vendas.filter(v => v.status === "fechada")
-  
-  const generateChartData = () => {
+  const generateChartData = (): ChartDataItem[] => {
+    const currentDate = new Date()
+    const currentYear = currentDate.getUTCFullYear()
+    const currentMonth = currentDate.getUTCMonth()
+    
+    const vendasFechadas = vendas.filter(v => v.status === "fechada")
+    
     if (period === "year") {
       const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
       return monthNames.map((month, index) => {
         const monthVendas = vendasFechadas.filter(v => {
           const vendaDate = new Date(v.data)
-          return vendaDate.getMonth() === index && vendaDate.getFullYear() === currentYear
+          const vendaMonth = vendaDate.getUTCMonth()
+          const vendaYear = vendaDate.getUTCFullYear()
+          return vendaMonth === index && vendaYear === currentYear
         })
         
         const total = monthVendas.reduce((acc, venda) => acc + venda.valor, 0)
@@ -50,7 +69,7 @@ export function SalesChart({ className }: SalesChartProps) {
     }
     
     if (period === "semester") {
-      const data = []
+      const data: ChartDataItem[] = []
       for (let i = 5; i >= 0; i--) {
         let targetMonth = currentMonth - i
         let targetYear = currentYear
@@ -62,7 +81,9 @@ export function SalesChart({ className }: SalesChartProps) {
         
         const monthVendas = vendasFechadas.filter(v => {
           const vendaDate = new Date(v.data)
-          return vendaDate.getMonth() === targetMonth && vendaDate.getFullYear() === targetYear
+          const vendaMonth = vendaDate.getUTCMonth()
+          const vendaYear = vendaDate.getUTCFullYear()
+          return vendaMonth === targetMonth && vendaYear === targetYear
         })
         
         const total = monthVendas.reduce((acc, venda) => acc + venda.valor, 0)
@@ -78,7 +99,7 @@ export function SalesChart({ className }: SalesChartProps) {
     }
     
     if (period === "quarter") {
-      const data = []
+      const data: ChartDataItem[] = []
       for (let i = 2; i >= 0; i--) {
         let targetMonth = currentMonth - i
         let targetYear = currentYear
@@ -90,7 +111,9 @@ export function SalesChart({ className }: SalesChartProps) {
         
         const monthVendas = vendasFechadas.filter(v => {
           const vendaDate = new Date(v.data)
-          return vendaDate.getMonth() === targetMonth && vendaDate.getFullYear() === targetYear
+          const vendaMonth = vendaDate.getUTCMonth()
+          const vendaYear = vendaDate.getUTCFullYear()
+          return vendaMonth === targetMonth && vendaYear === targetYear
         })
         
         const total = monthVendas.reduce((acc, venda) => acc + venda.valor, 0)
@@ -108,7 +131,9 @@ export function SalesChart({ className }: SalesChartProps) {
     return []
   }
   
-  const chartData = generateChartData()
+  useEffect(() => {
+    setChartData(generateChartData())
+  }, [period])
 
   const data = {
     labels: chartData.map(item => item.name),  
@@ -123,15 +148,8 @@ export function SalesChart({ className }: SalesChartProps) {
     ],
   }
 
-  const formatter = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  })
-
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Evolução de Vendas</CardTitle>

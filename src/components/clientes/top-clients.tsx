@@ -5,7 +5,6 @@ import { vendas } from "@/data/vendas"
 import Link from "next/link"
 
 export function TopClients() {
-  // Calcular total de vendas por cliente
   const clientVendas = clientes.map(cliente => {
     const clienteVendas = vendas.filter(venda => 
       venda.clienteId === cliente.id && venda.status === "fechada"
@@ -20,12 +19,10 @@ export function TopClients() {
     }
   })
   
-  // Ordenar por total de vendas e pegar os top 5
   const topClients = [...clientVendas]
     .sort((a, b) => b.totalVendas - a.totalVendas)
     .slice(0, 5)
     
-  // Formatar valor
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { 
       style: 'currency', 
@@ -34,7 +31,7 @@ export function TopClients() {
   }
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-xl font-semibold">Melhores Clientes</CardTitle>
       </CardHeader>
