@@ -3,9 +3,9 @@
 import { CampanhasList } from "@/components/campanha/campanhas-list";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import Link from "next/link";
 import { CampanhaForm } from "@/components/campanha/campanha-form";
 import { useState } from "react";
+import { Sidebar } from "@/components/dashboard/Sidebar";
 
 interface Campanha {
   id: string;
@@ -51,22 +51,22 @@ export default function CampanhasPage() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Campanhas</h1>
-        <CampanhaForm onCampanhaCreated={handleCampanhaCreated}>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Nova Campanha
-          </Button>
-        </CampanhaForm>
+    <div className="flex h-screen"> 
+      <Sidebar />
+
+      <div className="container mx-auto py-8 flex-1 overflow-y-auto">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Campanhas</h1>
+          <CampanhaForm onCampanhaCreated={handleCampanhaCreated}>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Nova Campanha
+            </Button>
+          </CampanhaForm>
+        </div>
+
+        <CampanhasList campanhas={campanhas} onCampanhaDeleted={handleCampanhaDeleted} />
       </div>
-
-      <CampanhasList campanhas={campanhas} onCampanhaDeleted={handleCampanhaDeleted} />
-
-      <Link href="/">
-        <Button variant="ghost">Voltar para a Home</Button>
-      </Link>
     </div>
   );
 }

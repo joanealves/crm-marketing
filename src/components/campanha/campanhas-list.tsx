@@ -53,11 +53,11 @@ export function CampanhasList({ campanhas, onCampanhaDeleted }: CampanhasListPro
               <TableCell className="text-right">
                 <Button variant="ghost" size="icon">
                   <Edit className="h-4 w-4 mr-2" />
-                  Editar
+                 
                 </Button>
                 <Button variant="ghost" size="icon" onClick={() => onCampanhaDeleted(campanha.id)}>
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Excluir
+                  
                 </Button>
               </TableCell>
             </TableRow>

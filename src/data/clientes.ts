@@ -26,7 +26,7 @@ export const clientes: Cliente[] = [
     valor: 50000,
     ultimoContato: "2025-05-01",
     notas: "Interessada em nossa solução de CRM",
-    avatar: "../assets/avatars/maria.png"
+    avatar: "./assets/avatars/carlos.png"
   },
   {
     id: "3",
