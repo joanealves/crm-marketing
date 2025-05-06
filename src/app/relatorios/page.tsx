@@ -17,6 +17,8 @@ import {
 } from 'chart.js';
 import { Line, Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
+import Link from 'next/link'; 
+import { Sidebar } from "@/components/dashboard/Sidebar"; 
 
 ChartJS.register(
   CategoryScale,
@@ -41,6 +43,8 @@ interface ChartData {
 export default function RelatoriosPage() {
   const [vendasMensais, setVendasMensais] = useState<any>({});
   const [campanhasData, setCampanhasData] = useState<ChartData>({ labels: [], datasets: [] });
+  const [totalVendas, setTotalVendas] = useState(0);
+  const [taxaAberturaMedia, setTaxaAberturaMedia] = useState(0);
 
   useEffect(() => {
     // Dados de Vendas Mensais
@@ -87,6 +91,18 @@ export default function RelatoriosPage() {
         },
       ],
     });
+
+    // Calcular métricas resumidas
+    const totalVendasCalculado = vendas.reduce((acc, venda) => acc + venda.valor, 0);
+    setTotalVendas(totalVendasCalculado);
+
+    const totalTaxaAbertura = campanhas.reduce((acc, campanha) => {
+      const taxaAbertura = campanha.taxaAbertura ? parseFloat(campanha.taxaAbertura.replace('%', '')) : 0;
+      return acc + taxaAbertura;
+    }, 0);
+    const taxaAberturaMediaCalculada = campanhas.length > 0 ? totalTaxaAbertura / campanhas.length : 0;
+    setTaxaAberturaMedia(taxaAberturaMediaCalculada);
+
   }, []);
 
   const lineChartOptions = {
@@ -116,41 +132,70 @@ export default function RelatoriosPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
-      <h1 className="text-3xl font-bold">Relatórios</h1>
+    <div className="flex h-screen"> 
+      <Sidebar /> 
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+      <div className="flex-1 overflow-y-auto p-8"> 
+        <h1 className="text-3xl font-bold mb-6">Relatórios</h1>
+        <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <LineChart className="h-4 w-4" />
-              <span>Vendas por Período</span>
-            </CardTitle>
+            <CardTitle>Resumo Geral</CardTitle>
           </CardHeader>
           <CardContent>
-            {vendasMensais?.labels?.length > 0 ? (
-              <Line options={lineChartOptions} data={vendasMensais} />
-            ) : (
-              <p className="text-muted-foreground">Nenhum dado de vendas disponível.</p>
-            )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total de Vendas</p>
+                <p className="text-2xl font-bold">R$ {totalVendas.toFixed(2)}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Número de Campanhas</p>
+                <p className="text-2xl font-bold">{campanhas.length}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Taxa de Abertura Média</p>
+                <p className="text-2xl font-bold">{taxaAberturaMedia.toFixed(2)}%</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">ROI Total</p>
+                <p className="text-2xl font-bold">Em breve</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <BarChart className="h-4 w-4" />
-              <span>Desempenho de Campanhas</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {campanhasData?.labels?.length > 0 ? (
-              <Bar options={barChartOptions} data={campanhasData} />
-            ) : (
-              <p className="text-muted-foreground">Nenhum dado de campanhas disponível.</p>
-            )}
-          </CardContent>
-        </Card>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <LineChart className="h-4 w-4" />
+                <span>Vendas por Período</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {vendasMensais?.labels?.length > 0 ? (
+                <Line options={lineChartOptions} data={vendasMensais} />
+              ) : (
+                <p className="text-muted-foreground">Nenhum dado de vendas disponível.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <BarChart className="h-4 w-4" />
+                <span>Desempenho de Campanhas</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {campanhasData?.labels?.length > 0 ? (
+                <Bar options={barChartOptions} data={campanhasData} />
+              ) : (
+                <p className="text-muted-foreground">Nenhum dado de campanhas disponível.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
