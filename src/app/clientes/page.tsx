@@ -642,10 +642,10 @@ function ClientesContent() {
         <Sheet open={isViewingDetails} onOpenChange={setIsViewingDetails}>
           <SheetContent className="sm:max-w-md overflow-y-auto">
             <SheetHeader className="pb-4">
-              <SheetTitle className="text-xl">Detalhes do Cliente</SheetTitle>
+            <SheetTitle className="text-xl">Detalhes do Cliente</SheetTitle>
               <SheetDescription>
-              <span>{selectedCliente && getStatusBadge(selectedCliente.status)}</span>
-            </SheetDescription>
+                Informações do cliente
+              </SheetDescription>
             </SheetHeader>
             
             {selectedCliente && (
@@ -661,6 +661,7 @@ function ClientesContent() {
                       <div>
                         <h3 className="font-semibold text-lg">{selectedCliente.nome}</h3>
                         <p className="text-sm text-muted-foreground">{selectedCliente.cargo} em {selectedCliente.empresa}</p>
+                        {getStatusBadge(selectedCliente.status)}
                       </div>
                     </div>
                     <Button
