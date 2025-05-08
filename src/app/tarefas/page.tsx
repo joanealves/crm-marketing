@@ -71,7 +71,7 @@ export default function TarefasPage() {
 
 function TarefasContent() {
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true)
   const [searchTerm, setSearchTerm] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState<string | null>(null);
   const [prioridadeFiltro, setPrioridadeFiltro] = useState<string | null>(null);
