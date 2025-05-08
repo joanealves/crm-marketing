@@ -3,8 +3,11 @@
 import { SafeHydration } from '@/components/SafeHydration';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, BarChart2, Users, Calendar, Mail, Shield } from "lucide-react";
+import { ArrowRight, BarChart2, Mail, Users, Calendar } from "lucide-react";
 import Image from "next/image";
+import CapaCrm from "../assets/capa_crm.png";
+import CapaCampanhas from "../assets/crm_tarefas.png"
+import CapaClientes from "../assets/capa_clients.png"
 
 export default function Home() {
   const features = [
@@ -50,10 +53,10 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-10 md:mb-0">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 text-cyan-950">
                   Gerencie seus clientes e vendas com simplicidade
                 </h1>
-                <p className="text-xl mb-8 text-white/90">
+                <p className="text-xl mb-8 text-cyan-950">
                   Uma solução completa de CRM para impulsionar seu negócio e melhorar o relacionamento com seus clientes.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -64,17 +67,21 @@ export default function Home() {
                     </Button>
                   </Link>
                   <Link href="/dashboard">
-                    <Button variant="outline" className="border-white text-white hover:text-primary hover:bg-white" size="lg">
+                    <Button variant="outline" className="border-b-cyan-800 text-cyan-950 hover:text-primary hover:bg-white" size="lg">
                       Acessar Demo
                     </Button>
                   </Link>
                 </div>
               </div>
               <div className="md:w-1/2 flex justify-center">
-                <div className="relative w-full max-w-lg h-[400px] rounded-lg overflow-hidden shadow-xl">
+                <div className="relative w-full max-w-lg h-[200px] rounded-lg overflow-hidden shadow-xl">
                   <div className="absolute inset-0 bg-white rounded-lg">
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                      <BarChart2 className="h-20 w-20 text-gray-400" />
+                    <Image 
+                    src={CapaCrm} 
+                    alt="Dashboard Analítico"
+                    className="object-contain"
+                  />
                     </div>
                   </div>
                 </div>
@@ -95,7 +102,7 @@ export default function Home() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {features.map((feature, index) => (
                 <div key={index} className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="mb-4">{feature.icon}</div>
+                                    <div className="mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </div>
@@ -116,7 +123,11 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                  <Users className="h-16 w-16 text-gray-400" />
+                <Image 
+                    src={CapaClientes} 
+                    alt="Dashboard Analítico"
+                    className="object-contain"
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold mb-2">Gestão de Clientes</h3>
@@ -126,7 +137,11 @@ export default function Home() {
               
               <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                  <BarChart2 className="h-16 w-16 text-gray-400" />
+                  <Image 
+                    src={CapaCrm} 
+                    alt="Dashboard Analítico"
+                    className="object-contain"
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold mb-2">Dashboard Analítico</h3>
@@ -136,7 +151,11 @@ export default function Home() {
               
               <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                  <Mail className="h-16 w-16 text-gray-400" />
+                <Image 
+                    src={CapaCampanhas} 
+                    alt="Dashboard Analítico"
+                    className="object-contain"
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold mb-2">Campanhas de Marketing</h3>
@@ -179,10 +198,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-20 bg-primary text-white">
+        <section className="py-20 bg-primary text-cyan-950">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-4">Pronto para começar?</h2>
-            <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+            <p className="text-xl mb-8 text-cyan-950 max-w-2xl mx-auto">
               Registre-se hoje e comece a gerenciar seus clientes de forma mais eficiente.
             </p>
             <div className="flex justify-center gap-4">
@@ -192,7 +211,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/auth/login">
-                <Button variant="outline" className="border-white text-white hover:text-primary hover:bg-white" size="lg">
+                <Button variant="outline" className="border-whitetext-cyan-950 hover:text-primary hover:bg-white" size="lg">
                   Fazer Login
                 </Button>
               </Link>
