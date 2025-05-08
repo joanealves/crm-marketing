@@ -187,7 +187,7 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {testimonials.map((testimonial, index) => (
                 <div key={index} className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <p className="text-lg mb-4 italic">"{testimonial.quote}"</p>
+                  <p className="text-lg mb-4 italic">{testimonial.quote}</p>
                   <div>
                     <p className="font-bold">{testimonial.author}</p>
                     <p className="text-sm text-muted-foreground">{testimonial.role}</p>

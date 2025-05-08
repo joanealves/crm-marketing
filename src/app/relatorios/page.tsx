@@ -17,7 +17,6 @@ import {
 } from 'chart.js';
 import { Line, Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
-import Link from 'next/link'; 
 import { Sidebar } from "@/components/dashboard/Sidebar"; 
 
 ChartJS.register(
@@ -31,6 +30,16 @@ ChartJS.register(
   BarElement
 );
 
+interface VendasMensais {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    borderColor: string;
+    backgroundColor: string;
+  }[];
+}
+
 interface ChartData {
   labels: string[];
   datasets: {
@@ -41,13 +50,15 @@ interface ChartData {
 }
 
 export default function RelatoriosPage() {
-  const [vendasMensais, setVendasMensais] = useState<any>({});
+  const [vendasMensais, setVendasMensais] = useState<VendasMensais>({
+    labels: [],
+    datasets: [],
+  });
   const [campanhasData, setCampanhasData] = useState<ChartData>({ labels: [], datasets: [] });
   const [totalVendas, setTotalVendas] = useState(0);
   const [taxaAberturaMedia, setTaxaAberturaMedia] = useState(0);
 
   useEffect(() => {
-    // Dados de Vendas Mensais
     const vendasPorMes: { [key: string]: number } = {};
     vendas.forEach(venda => {
       const dataVenda = new Date(venda.data);
@@ -74,7 +85,6 @@ export default function RelatoriosPage() {
       ],
     });
 
-    // Dados de Desempenho de Campanhas
     const labelsCampanhas = campanhas.map(campanha => campanha.nome);
     const dataCampanhas = campanhas.map(campanha => {
       const taxaAbertura = campanha.taxaAbertura ? parseFloat(campanha.taxaAbertura.replace('%', '')) : 0;
@@ -92,7 +102,6 @@ export default function RelatoriosPage() {
       ],
     });
 
-    // Calcular métricas resumidas
     const totalVendasCalculado = vendas.reduce((acc, venda) => acc + venda.valor, 0);
     setTotalVendas(totalVendasCalculado);
 

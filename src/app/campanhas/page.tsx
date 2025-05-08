@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CampanhasList } from "@/components/campanha/campanhas-list";
 import { CampanhaForm } from "@/components/campanha/campanha-form";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,6 @@ import {
   BarChart2, 
   Share2, 
   Calendar,
-  Eye,
   Users,
   MailOpen,
   MousePointer,

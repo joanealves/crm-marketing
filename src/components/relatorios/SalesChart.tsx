@@ -1,8 +1,6 @@
-"use client"
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { vendas } from "@/data/vendas"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Line } from "react-chartjs-2"
 import {
@@ -26,124 +24,61 @@ interface ChartDataItem {
 export function SalesChart() {
   const [period, setPeriod] = useState<"year" | "semester" | "quarter">("semester")
   const [chartData, setChartData] = useState<ChartDataItem[]>([])
-  const [formatter, setFormatter] = useState(new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }))
-  
-  useEffect(() => {
-    setFormatter(new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }))
-  }, [])
-  
-  const generateChartData = (): ChartDataItem[] => {
+
+  const getMonthlySales = (month: number, year: number): number => {
+    return vendas
+      .filter(venda => {
+        const vendaDate = new Date(venda.data)
+        return vendaDate.getUTCMonth() === month && vendaDate.getUTCFullYear() === year && venda.status === "fechada"
+      })
+      .reduce((acc, venda) => acc + venda.valor, 0)
+  }
+
+  const generateChartData = useCallback((): ChartDataItem[] => {
     const currentDate = new Date()
     const currentYear = currentDate.getUTCFullYear()
     const currentMonth = currentDate.getUTCMonth()
-    
-    const vendasFechadas = vendas.filter(v => v.status === "fechada")
-    
+
+    const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+
     if (period === "year") {
-      const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
       return monthNames.map((month, index) => {
-        const monthVendas = vendasFechadas.filter(v => {
-          const vendaDate = new Date(v.data)
-          const vendaMonth = vendaDate.getUTCMonth()
-          const vendaYear = vendaDate.getUTCFullYear()
-          return vendaMonth === index && vendaYear === currentYear
-        })
-        
-        const total = monthVendas.reduce((acc, venda) => acc + venda.valor, 0)
-        
-        return {
-          name: month,
-          total
-        }
+        const total = getMonthlySales(index, currentYear)
+        return { name: month, total }
       })
     }
-    
-    if (period === "semester") {
-      const data: ChartDataItem[] = []
-      for (let i = 5; i >= 0; i--) {
-        let targetMonth = currentMonth - i
-        let targetYear = currentYear
-        
-        if (targetMonth < 0) {
-          targetMonth = 12 + targetMonth
-          targetYear--
-        }
-        
-        const monthVendas = vendasFechadas.filter(v => {
-          const vendaDate = new Date(v.data)
-          const vendaMonth = vendaDate.getUTCMonth()
-          const vendaYear = vendaDate.getUTCFullYear()
-          return vendaMonth === targetMonth && vendaYear === targetYear
-        })
-        
-        const total = monthVendas.reduce((acc, venda) => acc + venda.valor, 0)
-        
-        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
-        
-        data.push({
-          name: monthNames[targetMonth],
-          total
-        })
+
+    const periods = period === "semester" ? 6 : 3
+    const data: ChartDataItem[] = []
+
+    for (let i = periods - 1; i >= 0; i--) {
+      let targetMonth = currentMonth - i
+      let targetYear = currentYear
+
+      if (targetMonth < 0) {
+        targetMonth = 12 + targetMonth
+        targetYear--
       }
-      return data
+
+      const total = getMonthlySales(targetMonth, targetYear)
+      data.push({ name: monthNames[targetMonth], total })
     }
-    
-    if (period === "quarter") {
-      const data: ChartDataItem[] = []
-      for (let i = 2; i >= 0; i--) {
-        let targetMonth = currentMonth - i
-        let targetYear = currentYear
-        
-        if (targetMonth < 0) {
-          targetMonth = 12 + targetMonth
-          targetYear--
-        }
-        
-        const monthVendas = vendasFechadas.filter(v => {
-          const vendaDate = new Date(v.data)
-          const vendaMonth = vendaDate.getUTCMonth()
-          const vendaYear = vendaDate.getUTCFullYear()
-          return vendaMonth === targetMonth && vendaYear === targetYear
-        })
-        
-        const total = monthVendas.reduce((acc, venda) => acc + venda.valor, 0)
-        
-        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
-        
-        data.push({
-          name: monthNames[targetMonth],
-          total
-        })
-      }
-      return data
-    }
-    
-    return []
-  }
-  
+
+    return data
+  }, [period]) 
+
   useEffect(() => {
     setChartData(generateChartData())
-  }, [period])
-
+  }, [period, generateChartData]) 
   const data = {
-    labels: chartData.map(item => item.name),  
+    labels: chartData.map(item => item.name),
     datasets: [
       {
         label: 'Vendas',
-        data: chartData.map(item => item.total),  
+        data: chartData.map(item => item.total),
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,  
+        fill: true,
       },
     ],
   }
@@ -162,31 +97,23 @@ export function SalesChart() {
         <div className="flex gap-2">
           <Button 
             variant={period === "quarter" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setPeriod("quarter")}
-          >
-            3M
+            onClick={() => setPeriod("quarter")}>
+            Trimestre
           </Button>
           <Button 
             variant={period === "semester" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setPeriod("semester")}
-          >
-            6M
+            onClick={() => setPeriod("semester")}>
+            Semestre
           </Button>
           <Button 
             variant={period === "year" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setPeriod("year")}
-          >
-            1A
+            onClick={() => setPeriod("year")}>
+            Ano
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="h-80">
-        <div className="h-full">
-          <Line data={data} options={{ responsive: true }} />
-        </div>
+      <CardContent>
+        <Line data={data} />
       </CardContent>
     </Card>
   )

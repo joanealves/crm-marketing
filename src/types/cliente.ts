@@ -5,7 +5,7 @@ export interface Cliente {
   telefone: string;
   empresa: string;
   cargo: string;
-  status: 'ativo' | 'inativo' | 'lead' | 'oportunidade';
+  status: "lead" | "prospect" | "cliente" | "inativo" | "ativo" | "oportunidade";
   valor: number;
   ultimoContato: string;
   proximoContato?: string;

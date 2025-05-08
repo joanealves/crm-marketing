@@ -36,7 +36,8 @@ const formSchema = z.object({
   telefone: z.string().min(8, { message: "Telefone inválido" }),
   empresa: z.string().min(2, { message: "Nome da empresa é obrigatório" }),
   cargo: z.string().min(2, { message: "Cargo é obrigatório" }),
-  status: z.enum(["lead", "prospect", "cliente", "inativo"]),
+  status: z.enum(["lead", "prospect", "cliente", "inativo", "ativo", "oportunidade"]),
+
   observacoes: z.string().optional(),
 })
 
@@ -58,7 +59,7 @@ export function ClienteForm({ children, cliente, onUpdate }: ClienteFormProps) {
       empresa: cliente.empresa,
       cargo: cliente.cargo,
       status: cliente.status,
-      observacoes: cliente.observacoes || "",
+      observacoes: cliente.notas || "",
     } : {
       nome: "",
       email: "",
@@ -72,7 +73,6 @@ export function ClienteForm({ children, cliente, onUpdate }: ClienteFormProps) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (cliente) {
-      // Atualizar cliente existente
       const updatedCliente: Cliente = {
         ...cliente,
         ...values,
@@ -81,15 +81,12 @@ export function ClienteForm({ children, cliente, onUpdate }: ClienteFormProps) {
         onUpdate(updatedCliente)
       }
     } else {
-      // Criar novo cliente
       const newCliente: Cliente = {
         id: `${clientes.length + 1}`,
         ...values,
-        valorTotal: 0,
+        valor: 0,
         ultimoContato: new Date().toISOString(),
-        criadoEm: new Date().toISOString(),
       }
-      // Em um app real, isso seria uma chamada de API
       clientes.push(newCliente)
     }
     

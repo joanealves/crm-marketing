@@ -34,8 +34,11 @@ const statusMap = {
   lead: { label: "Lead", class: "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-800/30 dark:text-blue-500" },
   prospect: { label: "Prospect", class: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-800/30 dark:text-yellow-500" },
   cliente: { label: "Cliente", class: "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-800/30 dark:text-green-500" },
-  inativo: { label: "Inativo", class: "bg-gray-100 text-gray-800 hover:bg-gray-100/80 dark:bg-gray-800/30 dark:text-gray-500" },
-}
+  inativo: { label: "Inativo", class: "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-800/30 dark:text-red-500" },
+  ativo: { label: "Ativo", class: "bg-emerald-100 text-emerald-800 hover:bg-emerald-100/80 dark:bg-emerald-800/30 dark:text-emerald-500" },
+  oportunidade: { label: "Oportunidade", class: "bg-indigo-100 text-indigo-800 hover:bg-indigo-100/80 dark:bg-indigo-800/30 dark:text-indigo-500" },
+};
+
 
 interface ClienteDetailProps {
   cliente: Cliente
@@ -130,7 +133,7 @@ export function ClienteDetail({ cliente: initialCliente }: ClienteDetailProps) {
               <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Valor Total</p>
-                <p>{formatCurrency(cliente.valorTotal)}</p>
+                <p>{formatCurrency(cliente.valor)}</p>
               </div>
             </div>
             <div className="flex items-center">
@@ -144,14 +147,14 @@ export function ClienteDetail({ cliente: initialCliente }: ClienteDetailProps) {
               <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Cliente Desde</p>
-                <p>{formatDate(cliente.criadoEm)}</p>
+                <p>{formatDate(cliente.ultimoContato)}</p>
               </div>
             </div>
             <div className="flex items-start pt-2">
               <MessageSquare className="h-4 w-4 mr-2 mt-1 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Observações</p>
-                <p className="text-sm">{cliente.observacoes || "Nenhuma observação registrada."}</p>
+                <p className="text-sm">{cliente.notas || "Nenhuma observação registrada."}</p>
               </div>
             </div>
           </CardContent>
@@ -177,7 +180,7 @@ export function ClienteDetail({ cliente: initialCliente }: ClienteDetailProps) {
                 {cliente.status === "lead" || cliente.status === "prospect" ? (
                   <p>Nenhuma oportunidade cadastrada para este cliente.</p>
                 ) : (
-                  <p>Este cliente já possui {cliente.valorTotal > 0 ? "contratos ativos" : "nenhum contrato ativo"}.</p>
+                  <p>Este cliente já possui {cliente.valor > 0 ? "contratos ativos" : "nenhum contrato ativo"}.</p>
                 )}
                 <Button variant="outline" className="mt-4">
                   Adicionar Oportunidade

@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Search, Sun, Moon, User, Settings, Check } from "lucide-react"
+import { Bell, Search, Sun, Moon, User, Settings,} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -14,7 +14,6 @@ import {
 import { useTheme } from "next-themes"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-// Dados simulados de notificações
 const notifications = [
   {
     id: 1,
