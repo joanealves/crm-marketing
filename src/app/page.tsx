@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <SafeHydration>
       <div className="flex flex-col min-h-screen">
-        <section className="bg-gradient-to-r from-primary/90 to-primary/70 text-white py-20">
+        <section className="bg-gradient-to-r from-primary/100 to-primary/90 text-white py-20">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-10 md:mb-0">
@@ -74,9 +74,9 @@ export default function Home() {
                 </div>
               </div>
               <div className="md:w-1/2 flex justify-center">
-                <div className="relative w-full max-w-lg h-[200px] rounded-lg overflow-hidden shadow-xl">
-                  <div className="absolute inset-0 bg-white rounded-lg">
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                <div className="relative w-full max-w-lg h-[220px] rounded-lg overflow-hidden shadow-xl">
+                  <div className="absolute inset-0 bg-white rounded-lg shadow-indigo-500/50 ">
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                     <Image 
                     src={CapaCrm} 
                     alt="Dashboard Analítico"
@@ -223,8 +223,8 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-8 md:mb-0">
-                <h3 className="text-xl font-bold mb-2">CRM Portfolio</h3>
-                <p className="text-gray-400">Desenvolvido como projeto de portfólio</p>
+                <h3 className="text-xl font-bold mb-2">CRM PRO</h3>
+                <p className="text-gray-400">Desenvolvido por Schema Desenvolvimento</p>
               </div>
               <div className="flex gap-4">
                 <Link href="/auth/login">
@@ -245,7 +245,7 @@ export default function Home() {
               </div>
             </div>
             <div className="border-t border-white/10 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; {new Date().getFullYear()} CRM Portfolio. Todos os direitos reservados.</p>
+              <p>&copy; {new Date().getFullYear()} CRM PRO. Todos os direitos reservados.</p>
             </div>
           </div>
         </footer>
