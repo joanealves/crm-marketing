@@ -224,7 +224,6 @@ export default function Home() {
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-8 md:mb-0">
                 <h3 className="text-xl font-bold mb-2">CRM PRO</h3>
-                <p className="text-gray-400">Desenvolvido por Schema Desenvolvimento</p>
               </div>
               <div className="flex gap-4">
                 <Link href="/auth/login">
