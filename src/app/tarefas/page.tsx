@@ -506,7 +506,6 @@ function TarefasContent() {
           </TabsContent>
         </Tabs>
 
-        {/* Modal Adicionar Tarefa */}
         <Dialog open={isAdicionarOpen} onOpenChange={(open) => {
           setIsAdicionarOpen(open);
           if (!open) resetNovaTarefaForm();
@@ -657,7 +656,6 @@ function TarefasContent() {
           </DialogContent>
         </Dialog>
 
-        {/* Modal Editar Tarefa */}
         <Dialog open={isEditarOpen} onOpenChange={setIsEditarOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -815,7 +813,6 @@ function TarefasContent() {
          </DialogContent>
        </Dialog>
 
-       {/* Modal Visualizar Tarefa */}
        <Dialog open={isVisualizarOpen} onOpenChange={setIsVisualizarOpen}>
          <DialogContent className="sm:max-w-md">
            <DialogHeader>
