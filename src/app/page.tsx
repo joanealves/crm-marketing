@@ -73,15 +73,16 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-              <div className="md:w-1/2 flex justify-center">
-                <div className="relative w-full max-w-lg h-[220px] rounded-lg overflow-hidden shadow-xl">
-                  <div className="absolute inset-0 bg-white rounded-lg shadow-indigo-500/50 ">
+              <div className="w-full md:w-1/2 flex justify-center">
+                <div className="relative w-full max-w-lg h-[300px] sm:h-[350px] md:h-[300px] rounded-lg overflow-hidden shadow-xl">
+                  <div className="absolute inset-0 bg-white rounded-lg shadow-indigo-500/50">
                     <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                    <Image 
-                    src={CapaCrm} 
-                    alt="Dashboard Analítico"
-                    className="object-contain"
-                  />
+                      <Image 
+                        src={CapaCrm} 
+                        alt="Dashboard Analítico"
+                        className="object-contain w-full h-full"
+                        priority
+                      />
                     </div>
                   </div>
                 </div>
@@ -102,7 +103,7 @@ export default function Home() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {features.map((feature, index) => (
                 <div key={index} className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="mb-4">{feature.icon}</div>
+                  <div className="mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </div>
@@ -123,10 +124,10 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                <Image 
+                  <Image 
                     src={CapaClientes} 
                     alt="Dashboard Analítico"
-                    className="object-contain"
+                    className="object-contain w-full h-full"
                   />
                 </div>
                 <div className="p-4">
@@ -140,7 +141,7 @@ export default function Home() {
                   <Image 
                     src={CapaCrm} 
                     alt="Dashboard Analítico"
-                    className="object-contain"
+                    className="object-contain w-full h-full"
                   />
                 </div>
                 <div className="p-4">
@@ -151,10 +152,10 @@ export default function Home() {
               
               <div className="rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                <Image 
+                  <Image 
                     src={CapaCampanhas} 
                     alt="Dashboard Analítico"
-                    className="object-contain"
+                    className="object-contain w-full h-full"
                   />
                 </div>
                 <div className="p-4">
